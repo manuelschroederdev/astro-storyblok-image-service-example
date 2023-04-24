@@ -1,0 +1,61 @@
+---
+import { storyblokEditable } from '@storyblok/astro'
+
+const { blok } = Astro.props
+
+let images = {
+  desktop: '',
+  tablet: '',
+  phone: '',
+}
+
+if (blok.default_image?.filename) {
+  images = {
+    desktop: blok.default_image?.filename + '/m/1200x400',
+    tablet: blok.default_image?.filename + '/m/800x400',
+    phone: blok.default_image?.filename + '/m/800x600',
+  }
+}
+
+if (blok.default_image?.focus) {
+  for (const key of Object.keys(images)) {
+    images[key] += '/filters:focal(' + blok.default_image.focus + ')'
+  }
+}
+
+const sizes = ['phone', 'tablet']
+
+sizes.forEach((size) => {
+  if (blok[size + '_image']?.filename) {
+    images[size] = blok[size + '_image'].filename
+    switch (size) {
+      case 'phone':
+        images[size] += '/m/800x600'
+        break
+      case 'tablet':
+      default:
+        images[size] += '/m/800x400'
+    }
+  }
+  if (blok[size + '_image']?.focus) {
+    images[size] += '/filters:focal(' + blok[size + '_image'].focus + ')'
+  }
+})
+---
+
+<div {...storyblokEditable(blok)} class='container mx-auto py-12'>
+  {
+    images.desktop && (
+      <img src={images.desktop} class='hidden invisible lg:block lg:visible' />
+    )
+  }
+  {
+    images.tablet && (
+      <img
+        src={images.tablet}
+        class='hidden invisible md:block md:visible lg:hidden lg:invisible'
+      />
+    )
+  }
+  {images.phone && <img src={images.phone} class='md:hidden md:invisible' />}
+</div>
