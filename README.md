@@ -1,0 +1,1 @@
+Just a simple example of using the Storyblok Image Service in Astro to generate responsive images that can be overwritten with phone/tablet specific versions if needed.
